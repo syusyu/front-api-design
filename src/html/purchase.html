@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>store-admin-cart</title>
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="../css/_system/font-awesome.css"/>
+	<link rel="stylesheet" href="../css/_system/spa_page_manager.css"/>
+	<link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+
+<div class="header">
+	<div class="">
+		<h1><a href=""><img src="../img/icon.png" class="logo">Store-admin-front</a></h1>
+	</div>
+</div>
+
+<div id="main">
+	<div class="sidemenu">
+	</div>
+	<div class="contents-wrapper">
+
+		<div id="contents-product-detail" class="spa-page page-product-detail">
+			<h2>Product detail</h2>
+			<a href="javascript:void(0);" data-action-click-id="add-to-cart">Add to cart (Succeed)</a>
+			<a href="javascript:void(0);" data-action-click-id="add-to-cart-failure">Add to cart (Fail)</a>
+		</div>
+
+		<div id="contents-cart-top" class="spa-page page-cart-top">
+			<h2>Cart top</h2>
+			<a href="javascript:void(0);" data-action-click-id="to-product-detail">Back to product</a>
+			<a href="javascript:void(0);" data-action-click-id="checkout-to-address">Checkout (To address)</a>
+			<a href="javascript:void(0);" data-action-click-id="checkout-to-bp">Checkout (To BP)</a>
+		</div>
+
+		<div id="contents-checkout-shipping-address" class="spa-page page-checkout-address">
+			<a href="javascript:void(0);" data-action-click-id="checkout-address-back">Back to Cart</a>
+			<a href="javascript:void(0);" data-action-click-id="checkout-address-next">Next</a>
+		</div>
+
+		<div id="contents-checkout-main-input" class="spa-page page-checkout-bp">
+			<a href="javascript:void(0);" data-action-click-id="checkout-bp-back">Back to Cart</a>
+			<a href="javascript:void(0);" data-action-click-id="checkout-bp-next">To confirm</a>
+		</div>
+	</div>
+
+	<input type="hidden" id="server-host" value="."/>
+
+</div>
+
+
+<div class="footer">
+	<p>Copy right &copy; EC development team</p>
+</div>
+
+<script src="../js/_system/jquery/jquery.js"></script>
+<script src="../js/_system/jquery/jquery.uriAnchor.js"></script>
+<script src="../js/_system/spa_page_manager.js"></script>
+<script src="../js/cart.js"></script>
+<script src="../js/cart.model.js"></script>
+<script>
+    $(function () {
+        var is_debug_mode = true;
+        cart.initModule($('#main'), is_debug_mode);
+    });
+</script>
+
+</body>
+</html>

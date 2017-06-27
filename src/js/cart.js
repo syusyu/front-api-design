@@ -9,63 +9,17 @@ var cart = (function () {
 
     initModule = function ($container, is_debug_mode) {
         var
-            // validateSearchCustomer = spa_page_transition.createFunc(function (observer, anchor_map) {
-            //     getLogger().debug('validateSearchCustomer is called!', anchor_map);
-            // }),
-            validateSearchCustomer = spa_page_transition.createAjaxFunc('../../stub/product/cart-POST-302.json', function (observer, anchor_map, data) {
+            validateAddToCart = spa_page_transition.createAjaxFunc('../../stub/product/add-to-cart.json', function (observer, anchor_map, data) {
                 getLogger().debug('validateSearchCustomer is called!', anchor_map);
             }),
 
-            searchCustomer = spa_page_transition.createFunc(function (observer, anchor_map) {
+            validateAddToCartFailure = spa_page_transition.createAjaxFunc('../../stub/product/add-to-cart-failure.json', function (observer, anchor_map, data) {
+                getLogger().debug('validateAddToCartFailure is called!', anchor_map);
+            }),
+
+            temp = spa_page_transition.createFunc(function (observer, anchor_map) {
                 getLogger().debug('searchCustomer is called!', anchor_map);
                 observer.trigger('CUSTOMER', cart.model.search_customer());
-            }),
-
-            selectCustomer = spa_page_transition.createFunc(function (observer, anchor_map) {
-                getLogger().debug('selectCustomer is called!', anchor_map);
-                observer.trigger('CUSTOMER', cart.model.select_customer());
-            }),
-
-            initItem = spa_page_transition.createFunc(function (observer, anchor_map) {
-                getLogger().debug('initItem is called!', anchor_map);
-                observer.trigger('ITEM', cart.model.init_item());
-            }),
-
-            searchItem = spa_page_transition.createFunc(function (observer, anchor_map) {
-                getLogger().debug('searchItem is called!', anchor_map);
-                cart.shell.hide_item_error();
-                observer.trigger('ITEM', cart.model.search_item());
-            }),
-
-            selectItem = spa_page_transition.createFunc(function (observer, anchor_map) {
-                getLogger().debug('selectItem is called!', anchor_map);
-                observer.trigger('ITEM', cart.model.select_item());
-            }),
-
-            addItem = spa_page_transition.createFunc(function (observer, anchor_map) {
-                getLogger().debug('addItem is called!', anchor_map);
-                observer.trigger('ITEM', cart.model.add_item());
-            }),
-
-            removeItem = spa_page_transition.createFunc(function (observer, anchor_map) {
-                getLogger().debug('removeItem is called!', anchor_map);
-                observer.trigger('ITEM', cart.model.remove_item());
-            }),
-
-            verifyInput = spa_page_transition.createFunc(function (observer, anchor_map) {
-                var has_error = false;
-                getLogger().debug('verifyInput is called!', anchor_map);
-                if (cart.model.get_item().status !== 'SELECTED') {
-                    has_error = true;
-                    cart.shell.show_item_error();
-                }
-                if (cart.shell.is_paymethod_new_credit_card() && spa_page_util.isEmpty(cart.shell.get_credit_card_num())) {
-                    has_error = true;
-                    cart.shell.show_credit_card_error();
-                }
-                if (has_error) {
-                    observer.forward('back-to-create-order');
-                }
             }),
 
             tearDown = spa_page_transition.createFunc(function (observer, anchor_map) {
@@ -73,7 +27,7 @@ var cart = (function () {
                 cart.shell.tear_down();
             }),
 
-            initializationFunc = spa_page_transition.createFunc(function (observer, anchor_map) {
+            initProduct = spa_page_transition.createFunc(function (observer, anchor_map) {
                 getLogger().debug('initializationFunc is called!');
                 cart.model.init_model();
                 observer.trigger('CUSTOMER', cart.model.get_customer());
@@ -85,22 +39,18 @@ var cart = (function () {
 
         cart.shell.initModule($container);
 
-        spa_page_transition.debugMode(is_debug_mode).initialize(initializationFunc)
-            .addAction(spa_page_transition.model.START_ACTION, 'page-select-customer')
-            .addAction('init-select-customer', 'page-select-customer', [initializationFunc])
-            .addAction('init-modify-order', 'page-modify-order')
-            .addAction('init-list-order', 'page-list-order')
-            .addAction('validate-search-customer', 'page-select-customer', [validateSearchCustomer])
-            .addAction('search-customer', 'page-select-customer', [searchCustomer])
-            .addAction('select-customer', 'page-create-order', [selectCustomer, initItem])
-            .addAction('change-customer', 'page-select-customer', [initializationFunc])
-            .addAction('search-item', 'page-select-item', [searchItem])
-            .addAction('back-to-create-order', 'page-create-order')
-            .addAction('select-item', 'page-create-order', [selectItem])
-            .addAction('add-item', 'page-create-order', [addItem])
-            .addAction('remove-item', 'page-create-order', [removeItem])
-            .addAction('back-to-create-order', 'page-create-order')
-            .addAction('next-to-confirm', 'page-create-order-confirm', [verifyInput, tearDown])
+        spa_page_transition.debugMode(is_debug_mode).initialize(initProduct)
+            .addAction(spa_page_transition.model.START_ACTION, 'page-product-detail')
+            .addAction('to-product-detail', 'page-product-detail')
+            .addAction('add-to-cart', 'dummy', [validateAddToCart])
+            .addAction('add-to-cart-failure', 'page-product-detail', [validateAddToCartFailure])
+
+            .addAction('to-cart-top', 'page-cart-top')
+            .addAction('checkout-to-address', 'page-checkout-address', [temp])
+            .addAction('checkout-to-bp', 'page-checkout-bp', [temp])
+
+            .addAction('shipping-address-back', 'page-cart-top', [temp])
+            .addAction('shipping-address-next', 'page-checkout-bp', [temp])
             .run();
     };
 
