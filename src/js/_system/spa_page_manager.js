@@ -330,7 +330,7 @@ spa_page_transition.func = (function () {
                     if (data.server_error_status) {
                         d.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
                     } else {
-                        if (data.http_status_code === 302) {
+                        if (data.http_status_code === 302 || data.http_status_code === 303) {
                             if (!data.next_action) {
                                 spa_page_transition.getLogger().error('Next action should be set in case of 302', data);
                             }
