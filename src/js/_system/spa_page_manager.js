@@ -326,7 +326,7 @@ spa_page_transition.func = (function () {
                 d = $.Deferred(),
                 this_obj = this;
 
-            spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj)).then(function (data) {
+            spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method).then(function (data) {
                     if (data.server_error_status) {
                         d.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
                     } else {
@@ -336,13 +336,13 @@ spa_page_transition.func = (function () {
                             }
                             this_obj.forward(data.next_action);
                             d.reject();
-                            return;
+                        } else {
+                            this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
+                                d.resolve(data_main_func);
+                            }, function (data_main_func) {
+                                d.reject(data_main_func);
+                            });
                         }
-                        this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
-                            d.resolve(data_main_func);
-                        }, function (data_main_func) {
-                            d.reject(data_main_func);
-                        });
                     }
                 }, function (data) {
                     spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed. data', data);
@@ -360,6 +360,11 @@ spa_page_transition.func = (function () {
 
         res.get_params = function (_get_params_func) {
             this.get_params_func = _get_params_func;
+            return this;
+        };
+
+        res.set_method = function (_method) {
+            this.method = _method;
             return this;
         };
 
@@ -393,13 +398,13 @@ spa_page_transition.func = (function () {
 var spa_page_data = (function () {
     'use strict';
     var
-        serverAccessor = function (filePath, data) {
+        serverAccessor = function (filePath, data, method) {
             var
                 dfd = $.Deferred();
 
             $.ajax({
                 url: filePath,
-                type: 'get',
+                type: method || 'get',
                 data: data,
                 dataType: 'json',
                 success: dfd.resolve,

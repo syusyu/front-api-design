@@ -20,11 +20,11 @@ var purchase = (function () {
             }),
             addToCart = spa_page_transition.createAjaxFunc('../../stub/purchase/product/add-cart-item.json', function (observer, anchor_map, data) {
                 getLogger().debug('addToCart is called!', anchor_map);
-            }),
+            }).set_method('post'),
             addToCartFailure = spa_page_transition.createAjaxFunc('../../stub/purchase/product/add-cart-item-failure.json', function (observer, anchor_map, data) {
                 getLogger().debug('addToCartFailure is called!', anchor_map);
                 purchase.shell.show_error();
-            }),
+            }).set_method('post'),
 
             /**
              * Cart top
