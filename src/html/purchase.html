@@ -12,7 +12,7 @@
 
 <div class="header">
 	<div class="">
-		<h1><a href=""><img src="../img/icon.png" class="logo">Front site</a></h1>
+		<h1><a href="">Front site</a></h1>
 	</div>
 </div>
 
@@ -20,6 +20,10 @@
 	<div class="sidemenu">
 	</div>
 	<div class="contents-wrapper">
+
+		<div id="notification-error" class="contents-error-hide">
+			Error occurs. Please review your selection.
+		</div>
 
 		<div id="contents-product-detail" class="spa-page page-product-detail">
 			<h2>Product detail</h2>
@@ -31,15 +35,37 @@
 			<hr>
 
 			<div>
-				<a href="javascript:void(0);" data-action-click-id="add-to-cart">Add to purchase (Succeed)</a>
+				<a href="javascript:void(0);" data-action-click-id="add-cart-item">Add cart item</a>
 				<br />
-				<a href="javascript:void(0);" data-action-click-id="add-to-cart-failure">Add to purchase (Fail)</a>
+				<a href="javascript:void(0);" data-action-click-id="add-cart-item-failure">Add cart item (Fail)</a>
 				<br />
 			</div>
 		</div>
 
 		<div id="contents-cart-top" class="spa-page page-cart-top">
 			<h2>Cart top</h2>
+			<hr>
+
+			<table class="tbl-search-result">
+				<thead>
+				<th>Name</th>
+				<th></th>
+				</thead>
+				<tbody data-bind-loop="CART-TOP.cart_items">
+				<tr>
+					<td>
+						<label>
+							<span data-bind-text="CART-TOP.cart_items.item_name"></span>
+						</label>
+					</td>
+					<td>
+						<button data-action-click-id="remove-item">Remove</button>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<hr>
+
 			<a href="javascript:void(0);" data-action-click-id="show-product-detail">Back to product</a>
 			<br />
 			<a href="javascript:void(0);" data-action-click-id="checkout-to-address">Checkout (To address)</a>
@@ -50,14 +76,20 @@
 			<br />
 		</div>
 
-		<div id="contents-checkout-shipping-address" class="spa-page page-checkout-address">
-			<a href="javascript:void(0);" data-action-click-id="checkout-address-back">Back to Cart</a>
-			<a href="javascript:void(0);" data-action-click-id="checkout-address-next">Next</a>
+		<div id="contents-checkout-address" class="spa-page page-checkout-address">
+			<h2>Shipping address</h2>
+			<hr>
+
+			<a href="javascript:void(0);" data-action-click-id="back-from-checkout-address">Back to Cart</a>
+			<a href="javascript:void(0);" data-action-click-id="next-from-checkout-address">Next</a>
 		</div>
 
-		<div id="contents-checkout-main-input" class="spa-page page-checkout-bp">
-			<a href="javascript:void(0);" data-action-click-id="checkout-bp-back">Back to Cart</a>
-			<a href="javascript:void(0);" data-action-click-id="checkout-bp-next">To confirm</a>
+		<div id="contents-checkout-bp" class="spa-page page-checkout-bp">
+			<h2>BP</h2>
+			<hr>
+
+			<a href="javascript:void(0);" data-action-click-id="back-from-checkout-bp">Back to Cart</a>
+			<a href="javascript:void(0);" data-action-click-id="purchase-from-bp">Purchase</a>
 		</div>
 	</div>
 
