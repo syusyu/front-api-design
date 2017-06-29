@@ -323,8 +323,19 @@ spa_page_transition.func = (function () {
 
         res.execute = function (anchor_map) {
             var
+                headers, access_token,
                 d = $.Deferred(),
                 this_obj = this;
+
+            if (this_obj.is_front_api) {
+                access_token = 'eyJhbGciOiJSUzI1NiJ9.eyJjbGllbnRJZCI6InRlbmFudDAwMSIsImV4cGlyYXRpb25EYXRlIjoiMjAxNy0wNi0zMFQwMTo0MDoxOS4zOTUrMDg6MDBbQXNpYS9TaW5nYXBvcmVdIiwiZW5kcG9pbnRzIjpbIipAKiJdfQ.Y1Tz-sOV-sMvK_ma8GWec6H3CzXF40McCEQ4YsREAbXy6SC_EXnmJiW-PRdkoo6IpqBYUl-sHASViRD37gECUiiOfsFZI8CBM1sa_7pSS4LBfoTUrF98LDf1jZymbuJI_muLFxe3IBN28lOLOO9oLjoV1rC5dLjnwkLyTp0EjGg';
+                headers = {
+                    'Access-Control-Allow-Origin' : '*',
+                    'client-id': 'tenant001',
+                    'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e',
+                    'access-token' : access_token,
+                };
+            }
 
             spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method).then(function (data) {
                     if (data.server_error_status) {
@@ -368,6 +379,11 @@ spa_page_transition.func = (function () {
             return this;
         };
 
+        res.set_is_front_api = function (_is_front_api) {
+            this.is_front_api = _is_front_api;
+            return this;
+        };
+
         decide_path = function (this_obj) {
             var
                 res = this_obj.get_path_func ? this_obj.get_path_func() : this_obj.path;
@@ -398,13 +414,14 @@ spa_page_transition.func = (function () {
 var spa_page_data = (function () {
     'use strict';
     var
-        serverAccessor = function (filePath, data, method) {
+        serverAccessor = function (filePath, data, method, headers) {
             var
                 dfd = $.Deferred();
 
             $.ajax({
                 url: filePath,
                 type: method || 'get',
+                headers: headers,
                 data: data,
                 dataType: 'json',
                 success: dfd.resolve,
