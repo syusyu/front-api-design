@@ -244,6 +244,7 @@ spa_page_transition.func = (function () {
         protoFunc,
         chooseArgByType,
         createFunc, createAjaxFunc,
+        getFrontApiAccessToken, makeFrontApiAccessTokenHeader, ajaxCallback,
         isUnitTestMode, setIsUnitTestMode;
 
     protoFunc = {
@@ -313,6 +314,37 @@ spa_page_transition.func = (function () {
         return res;
     };
 
+    getFrontApiAccessToken = function (_is_front_api) {
+        var
+            d = $.Deferred(),
+            headers = {
+                'client-id': 'tenant001',
+                'client-secret': '4aK97Iq14pGqzqHkipnlh4Poo4Trn7bnhr/kmazou63vm4bhlZjusIfvrrLuvJU=',
+            };
+
+        if (!_is_front_api) {
+            return $.Deferred().resolve();
+        }
+
+        spa_page_data.serverAccessor('http://172.26.158.2:9000/auth/hue/v1/authentication/authenticateClient', null, 'post', headers).then(function (data) {
+                spa_page_transition.getLogger().debug('getFrontApiAccessToken succeeded. data', data);
+                d.resolve(data);
+            }, function (data) {
+                spa_page_transition.getLogger().debug('getFrontApiAccessToken failed. data', data);
+                d.reject();
+            }
+        );
+        return d.promise();
+    };
+
+    makeFrontApiAccessTokenHeader = function () {
+
+    };
+
+    ajaxCallback = function () {
+
+    };
+
     createAjaxFunc = function (_path, _params, _main_func) {
         var
             decide_path, decide_params,
@@ -323,40 +355,39 @@ spa_page_transition.func = (function () {
 
         res.execute = function (anchor_map) {
             var
-                headers, access_token,
                 d = $.Deferred(),
-                this_obj = this;
-
-            if (this_obj.is_front_api) {
-                access_token = 'eyJhbGciOiJSUzI1NiJ9.eyJjbGllbnRJZCI6InRlbmFudDAwMSIsImV4cGlyYXRpb25EYXRlIjoiMjAxNy0wNi0zMFQxNzo0Njo1NC43MjYrMDg6MDBbQXNpYS9TaW5nYXBvcmVdIiwiZW5kcG9pbnRzIjpbIipAKiJdfQ.RLYeItJlkvjNugpEYEV2qFswd_hX596TRA99EdSiAiVHTEapQeqGYkJuGGfMHsNpREptKYGvX_v-MrdJGIsdaL-ZvJGeBJg7f_TIsSAR4Lz-efauXE2qm6AgnOMP4_z7vzspWvzUqpLunQdHxnKr2qXYu8A3f9ZiZWNurB_oTZQ';
+                this_obj = this,
                 headers = {
-                    'Access-Control-Allow-Origin' : '*',
                     'client-id': 'tenant001',
-                    'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e',
-                    'access-token' : access_token,
+                    'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e'
                 };
-            }
 
-            spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
-                    if (data.server_error_status) {
-                        d.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
-                    } else {
-                        if (data.http_status_code === 302 || data.http_status_code === 303) {
-                            if (!data.next_action) {
-                                spa_page_transition.getLogger().error('Next action should be set in case of 302', data);
+            getFrontApiAccessToken(this_obj.is_front_api).then(function (data) {
+                    headers['access-token'] = data.accessToken;
+                    spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
+                            if (data.server_error_status) {
+                                d.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
+                            } else {
+                                if (data.http_status_code === 302 || data.http_status_code === 303) {
+                                    if (!data.next_action) {
+                                        spa_page_transition.getLogger().error('Next action should be set in case of 302', data);
+                                    }
+                                    this_obj.forward(data.next_action);
+                                    d.reject();
+                                } else {
+                                    this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
+                                        d.resolve(data_main_func);
+                                    }, function (data_main_func) {
+                                        d.reject(data_main_func);
+                                    });
+                                }
                             }
-                            this_obj.forward(data.next_action);
-                            d.reject();
-                        } else {
-                            this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
-                                d.resolve(data_main_func);
-                            }, function (data_main_func) {
-                                d.reject(data_main_func);
-                            });
+                        }, function (data) {
+                            spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed. data', data);
+                            d.reject(data);
                         }
-                    }
+                    );
                 }, function (data) {
-                    spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed. data', data);
                     d.reject(data);
                 }
             );
@@ -1378,8 +1409,22 @@ var spa_page_util = (function () {
         },
         contains = function (str, target) {
             return str.indexOf(target) != -1;
+        },
+        getCookie = function (key) {
+            var
+                i, pair,
+                pairs = document.cookie.split('; ');
+            for (i = 0; i < pairs.length; i++) {
+                pair = pairs[i].split('=');
+                if (pair[0] === key) {
+                    return pair[1];
+                }
+            }
+            return null;
+        },
+        setCookie = function (key, val) {
+            document.cookie = key + '=' + val;
         };
-
     return {
         exists: exists,
         isEmpty: isEmpty,
@@ -1387,5 +1432,7 @@ var spa_page_util = (function () {
         startsWith: startsWith,
         endsWith: endsWith,
         contains: contains,
+        getCookie: getCookie,
+        setCookie: setCookie,
     }
 })();
