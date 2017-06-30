@@ -13,13 +13,16 @@ var purchase = (function () {
             /**
              * Product detail
              */
-            showProductDetail = spa_page_transition.createAjaxFunc('../../stub/purchase/product/show-product-detail.json', function (observer, anchor_map, data) {
-            // showProductDetail = spa_page_transition.createAjaxFunc('http://172.26.158.2:17050/api/v0/products/00000000-0000-001f-0000-00000000001f', function (observer, anchor_map, data) {
-                getLogger().debug('showProductDetail is called!');
+            showProductDetail = spa_page_transition.createAjaxFunc('http://172.26.158.2:17050/api/v0/products/00000000-0000-001f-0000-00000000001f', function (observer, anchor_map, data) {
+                getLogger().debug('showProductDetail(real API) is called!');
                 purchase.shell.hide_error();
-                observer.trigger('PRODUCT-DETAIL', data.contents);
-                // observer.trigger('PRODUCT-DETAIL', data);
-            }),
+                observer.trigger('PRODUCT-DETAIL', data);
+            }).set_is_front_api(true),
+            // showProductDetail = spa_page_transition.createAjaxFunc('../../stub/purchase/product/show-product-detail.json', function (observer, anchor_map, data) {
+            //     getLogger().debug('showProductDetail is called!');
+            //     purchase.shell.hide_error();
+            //     observer.trigger('PRODUCT-DETAIL', data.contents);
+            // }),
             addToCart = spa_page_transition.createAjaxFunc('../../stub/purchase/product/add-cart-item.json', function (observer, anchor_map, data) {
                 getLogger().debug('addToCart is called!', anchor_map);
             }).set_method('post'),

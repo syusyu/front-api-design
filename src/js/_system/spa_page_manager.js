@@ -328,7 +328,7 @@ spa_page_transition.func = (function () {
                 this_obj = this;
 
             if (this_obj.is_front_api) {
-                access_token = 'eyJhbGciOiJSUzI1NiJ9.eyJjbGllbnRJZCI6InRlbmFudDAwMSIsImV4cGlyYXRpb25EYXRlIjoiMjAxNy0wNi0zMFQwMTo0MDoxOS4zOTUrMDg6MDBbQXNpYS9TaW5nYXBvcmVdIiwiZW5kcG9pbnRzIjpbIipAKiJdfQ.Y1Tz-sOV-sMvK_ma8GWec6H3CzXF40McCEQ4YsREAbXy6SC_EXnmJiW-PRdkoo6IpqBYUl-sHASViRD37gECUiiOfsFZI8CBM1sa_7pSS4LBfoTUrF98LDf1jZymbuJI_muLFxe3IBN28lOLOO9oLjoV1rC5dLjnwkLyTp0EjGg';
+                access_token = 'eyJhbGciOiJSUzI1NiJ9.eyJjbGllbnRJZCI6InRlbmFudDAwMSIsImV4cGlyYXRpb25EYXRlIjoiMjAxNy0wNi0zMFQxNzo0Njo1NC43MjYrMDg6MDBbQXNpYS9TaW5nYXBvcmVdIiwiZW5kcG9pbnRzIjpbIipAKiJdfQ.RLYeItJlkvjNugpEYEV2qFswd_hX596TRA99EdSiAiVHTEapQeqGYkJuGGfMHsNpREptKYGvX_v-MrdJGIsdaL-ZvJGeBJg7f_TIsSAR4Lz-efauXE2qm6AgnOMP4_z7vzspWvzUqpLunQdHxnKr2qXYu8A3f9ZiZWNurB_oTZQ';
                 headers = {
                     'Access-Control-Allow-Origin' : '*',
                     'client-id': 'tenant001',
@@ -337,7 +337,7 @@ spa_page_transition.func = (function () {
                 };
             }
 
-            spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method).then(function (data) {
+            spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
                     if (data.server_error_status) {
                         d.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
                     } else {
@@ -746,7 +746,11 @@ spa_page_transition.data_bind = (function () {
                 if (data_val instanceof Array) {
                     _bind_prop_map[new_key] = data_val;
                     $.each(data_val, function (ary_idx, ary_val) {
-                        _create_bind_prop_map(new_key + '$' + ary_idx, ary_val);
+                        if (ary_val instanceof Object) {
+                            _create_bind_prop_map(new_key + '$' + ary_idx, ary_val);
+                        } else {
+                            _bind_prop_map[new_key + '$' + ary_idx] = ary_val;
+                        }
                     });
                 } else if (data_val instanceof Object) {
                     _create_bind_prop_map(new_key, data_val);
