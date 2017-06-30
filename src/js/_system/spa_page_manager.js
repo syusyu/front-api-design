@@ -243,8 +243,8 @@ spa_page_transition.func = (function () {
     var
         protoFunc,
         chooseArgByType,
-        createFunc, createAjaxFunc,
-        getFrontApiAccessToken, makeFrontApiAccessTokenHeader, ajaxCallback,
+        createFunc, createAjaxFunc, ajaxCallback,
+        makeFrontApiAccessTokenHeader,
         isUnitTestMode, setIsUnitTestMode;
 
     protoFunc = {
@@ -314,35 +314,58 @@ spa_page_transition.func = (function () {
         return res;
     };
 
-    getFrontApiAccessToken = function (_is_front_api) {
+    makeFrontApiAccessTokenHeader = function (_is_front_api, _is_auth) {
         var
             d = $.Deferred(),
             headers = {
                 'client-id': 'tenant001',
                 'client-secret': '4aK97Iq14pGqzqHkipnlh4Poo4Trn7bnhr/kmazou63vm4bhlZjusIfvrrLuvJU=',
+            },
+            result = {
+                'client-id': 'tenant001',
+                'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e'
             };
 
         if (!_is_front_api) {
             return $.Deferred().resolve();
         }
 
+        if (!_is_auth) {
+            result['access-token'] = spa_page_util.getCookie('access-token');
+            return $.Deferred().resolve(result);
+        }
+
         spa_page_data.serverAccessor('http://172.26.158.2:9000/auth/hue/v1/authentication/authenticateClient', null, 'post', headers).then(function (data) {
-                spa_page_transition.getLogger().debug('getFrontApiAccessToken succeeded. data', data);
-                d.resolve(data);
+                spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader succeeded. data', data);
+                result['access-token'] = data.accessToken;
+                spa_page_util.setCookie('access-token', data.accessToken);
+                d.resolve(result);
             }, function (data) {
-                spa_page_transition.getLogger().debug('getFrontApiAccessToken failed. data', data);
+                spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader failed. data', data);
                 d.reject();
             }
         );
         return d.promise();
     };
 
-    makeFrontApiAccessTokenHeader = function () {
-
-    };
-
-    ajaxCallback = function () {
-
+    ajaxCallback = function (data, dfd, this_obj, anchor_map) {
+        if (data.server_error_status) {
+            dfd.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
+        } else {
+            if (data.http_status_code === 302 || data.http_status_code === 303) {
+                if (!data.next_action) {
+                    spa_page_transition.getLogger().error('Next action should be set in case of 302', data);
+                }
+                this_obj.forward(data.next_action);
+                dfd.reject();
+            } else {
+                this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
+                    dfd.resolve(data_main_func);
+                }, function (data_main_func) {
+                    dfd.reject(data_main_func);
+                });
+            }
+        }
     };
 
     createAjaxFunc = function (_path, _params, _main_func) {
@@ -356,38 +379,18 @@ spa_page_transition.func = (function () {
         res.execute = function (anchor_map) {
             var
                 d = $.Deferred(),
-                this_obj = this,
-                headers = {
-                    'client-id': 'tenant001',
-                    'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e'
-                };
+                this_obj = this;
 
-            getFrontApiAccessToken(this_obj.is_front_api).then(function (data) {
-                    headers['access-token'] = data.accessToken;
+            makeFrontApiAccessTokenHeader(this_obj.is_front_api).then(function (headers) {
                     spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
-                            if (data.server_error_status) {
-                                d.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
-                            } else {
-                                if (data.http_status_code === 302 || data.http_status_code === 303) {
-                                    if (!data.next_action) {
-                                        spa_page_transition.getLogger().error('Next action should be set in case of 302', data);
-                                    }
-                                    this_obj.forward(data.next_action);
-                                    d.reject();
-                                } else {
-                                    this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
-                                        d.resolve(data_main_func);
-                                    }, function (data_main_func) {
-                                        d.reject(data_main_func);
-                                    });
-                                }
-                            }
+                            ajaxCallback(data, d, this_obj, anchor_map);
                         }, function (data) {
                             spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed. data', data);
                             d.reject(data);
                         }
                     );
                 }, function (data) {
+                    spa_page_transition.getLogger().error('getFrontApiAccessToken failed. data', data);
                     d.reject(data);
                 }
             );
