@@ -1,86 +1,76 @@
 var purchase = (function () {
     'use strict';
     var
-        logger, getLogger, initModule,
-        is_debug_mode = true;
-
-    getLogger = function () {
-        return logger;
-    };
+        initModule;
 
     initModule = function ($container) {
         var
             /**
              * Product detail
              */
-            showProductDetail = spa_page_transition.createAjaxFunc(purchase_config.URL.PRODUCT_DETAIL, function (observer, anchor_map, data) {
-                getLogger().debug('showProductDetail(real API) is called!');
-                purchase.shell.hide_error();
-                observer.trigger('PRODUCT-DETAIL', data);
+            showProductDetail = spa_page_transition.createAjaxFunc(purchase_config.URL.PRODUCT_DETAIL, 'get', function (observer, anchor_map, data) {
+                purchase.view.hide_error();
+            }, 'PRODUCT-DETAIL'),
+
+            addToCart = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART, 'post', function (observer, anchor_map, data) {
             }),
-            addToCart = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART, function (observer, anchor_map, data) {
-                getLogger().debug('addToCart is called!', anchor_map);
-            }).set_method('post'),
-            addToCartFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART_FAILURE, function (observer, anchor_map, data) {
-                getLogger().debug('addToCartFailure is called!', anchor_map);
-                purchase.shell.show_error();
-            }).set_method('post'),
+
+            addToCartFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART_FAILURE, 'post', function (observer, anchor_map, data) {
+                purchase.view.show_error();
+            }),
 
             /**
              * Cart top
              */
-            showCartTop = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW＿CART_TOP, function (observer, anchor_map, data) {
-                getLogger().debug('showProductDetail is called!');
-                purchase.shell.hide_error();
-                observer.trigger('CART-TOP', data.contents);
+            showCartTop = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW＿CART_TOP, 'get', function (observer, anchor_map, data) {
+                purchase.view.hide_error();
+            }, 'CART-TOP'),
+
+            checkoutToAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_ADDRESS, 'post', function (observer, anchor_map, data) {
             }),
-            checkoutToAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_ADDRESS, function (observer, anchor_map, data) {
-                getLogger().debug('checkoutToAddress is called!', anchor_map);
+
+            checkoutToBP = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_BP, 'post', function (observer, anchor_map, data) {
             }),
-            checkoutToBP = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_BP, function (observer, anchor_map, data) {
-                getLogger().debug('checkoutToBP is called!', anchor_map);
-            }),
-            checkoutFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_FAILURE, function (observer, anchor_map, data) {
-                getLogger().debug('checkoutFailure is called!', anchor_map);
-                purchase.shell.show_error();
+
+            checkoutFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_FAILURE, 'post', function (observer, anchor_map, data) {
+                purchase.view.show_error();
             }),
 
             /**
              * Checkout address
              */
-            showCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_ADDRESS, function (observer, anchor_map, data) {
-                getLogger().debug('showCheckoutAddress is called!');
-                purchase.shell.hide_error();
-                observer.trigger('CHECKOUT-ADDRESS', data.contents);
+            showCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_ADDRESS, 'get', function (observer, anchor_map, data) {
+                purchase.view.hide_error();
+            }, 'CHECKOUT-ADDRESS'),
+
+            backFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_ADDRESS, 'post', function (observer, anchor_map, data) {
             }),
-            backFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_ADDRESS, function (observer, anchor_map, data) {
-                getLogger().debug('backFromCheckoutAddress is called!', anchor_map);
-            }),
-            nextFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.NEXT_FROM_CHECKOUT_ADDRESS, function (observer, anchor_map, data) {
-                getLogger().debug('nextFromCheckoutAddress is called!', anchor_map);
+
+            nextFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.NEXT_FROM_CHECKOUT_ADDRESS, 'post', function (observer, anchor_map, data) {
             }),
 
             /**
              * Checkout BP
              */
-            showCheckoutBP = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_BP, function (observer, anchor_map, data) {
-                getLogger().debug('showCheckoutBP is called!');
-                purchase.shell.hide_error();
-                observer.trigger('CHECKOUT-BP', data.contents);
-            }),
-            backFromCheckoutBP = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_BP, function (observer, anchor_map, data) {
-                getLogger().debug('backFromCheckoutBP is called!', anchor_map);
+            showCheckoutBP = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_BP, 'get', function (observer, anchor_map, data) {
+                purchase.view.hide_error();
+            }, 'CHECKOUT-BP'),
+
+            backFromCheckoutBP = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_BP, 'post', function (observer, anchor_map, data) {
             }),
 
             dummy;
 
 
-        logger = spa_log.createLogger(is_debug_mode, '### PURCHASE.LOG ###');
-        purchase.shell.initModule($container);
+        //Init view
+        purchase.view.initModule($container);
+
+        //Init model
         purchase.model.initModule();
 
-        spa_page_transition.debugMode(is_debug_mode).initialize(showProductDetail)
-            .addAction(spa_page_transition.model.START_ACTION, 'page-product-detail')
+        //Init Application
+        spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.STUB)
+            .setInitAction('page-product-detail', [showProductDetail])
 
             .addAction('show-product-detail', 'page-product-detail', [showProductDetail])
             .addAction('add-cart-item', '', [addToCart])
@@ -97,16 +87,16 @@ var purchase = (function () {
 
             .addAction('show-checkout-bp', 'page-checkout-bp', [showCheckoutBP])
             .addAction('back-from-checkout-bp', '', [backFromCheckoutBP])
+
             .run();
     };
 
     return {
-        initModule: initModule,
-        getLogger: getLogger
+        initModule: initModule
     }
 })();
 
-purchase.shell = (function () {
+purchase.view = (function () {
     var
         $container,
 

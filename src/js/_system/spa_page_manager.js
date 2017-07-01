@@ -12,9 +12,10 @@
 var spa_page_transition = (function () {
     'use strict';
     var
-        addAction, createFunc, createAjaxFunc, initialize, run, renderPage,
+        setInitAction, addAction, createFunc, createAjaxFunc, initialize, run, renderPage,
         spaLogger, getLogger,
-        isDebugMode, debugMode,
+        isDebugMode = true,
+        debugMode,
         isUnitTestMode, unitTestMode,
 
         ENUM_API_MODE = {STUB: 'STUB', REAL: 'REAL'},
@@ -41,6 +42,11 @@ var spa_page_transition = (function () {
         return spa_page_transition.func.createAjaxFunc.apply(this, arguments);
     };
 
+    setInitAction = function (next_page_cls, func_list) {
+        spa_page_transition.model.addAction(spa_page_transition.model.START_ACTION, next_page_cls, func_list);
+        return spa_page_transition;
+    };
+
     /**
      * Add action
      * @param action_id: compulsory
@@ -58,7 +64,7 @@ var spa_page_transition = (function () {
      * @returns {*}
      */
     initialize = function (initialize_func) {
-        spaLogger = spa_log.createLogger(isDebugMode, 'SPA.LOG ');
+        spaLogger = spa_log.createLogger('SPA.LOG ', !isDebugMode);
         spa_page_transition.model.initialize.apply(this, arguments);
         spa_page_transition.func.setIsUnitTestMode(isUnitTestMode)
         return spa_page_transition;
@@ -94,7 +100,7 @@ var spa_page_transition = (function () {
      */
     run = function (params) {
         if (!spaLogger) {
-            spaLogger = spa_log.createLogger(isDebugMode, 'SPA.LOG ');
+            spaLogger = spa_log.createLogger('SPA.LOG ');
         }
         spa_page_transition.data_bind.run();
         spa_page_transition.shell.run(params);
@@ -129,12 +135,13 @@ var spa_page_transition = (function () {
     }
 
     return {
+        ENUM_API_MODE: ENUM_API_MODE,
+        setInitAction: setInitAction,
         addAction: addAction,
         getLogger: getLogger,
         createFunc: createFunc,
         createAjaxFunc: createAjaxFunc,
         debugMode: debugMode,
-        ENUM_API_MODE: ENUM_API_MODE,
         getApiMode: getApiMode,
         setApiMode: setApiMode,
         unitTestMode: unitTestMode,
@@ -257,7 +264,7 @@ spa_page_transition.func = (function () {
     var
         protoFunc,
         chooseArgByType,
-        createFunc, createAjaxFunc, ajaxCallback,
+        createFunc, createAjaxFunc, ajaxCallback, decidePath,
         makeFrontApiAccessTokenHeader,
         isUnitTestMode, setIsUnitTestMode;
 
@@ -266,9 +273,12 @@ spa_page_transition.func = (function () {
             return this.exec_main_func(this, anchor_map).promise();
         },
 
-        exec_main_func: function (this_obj, anchor_map, data) {
+        exec_main_func: function (this_obj, anchor_map, data, trigger_key) {
             try {
                 this_obj.main_func(this_obj, anchor_map, data);
+                if (spa_page_util.isNotEmpty(trigger_key)) {
+                    this_obj.trigger(trigger_key, data);
+                }
             } catch (e) {
                 if (isUnitTestMode) {
                     spa_page_transition.getLogger().error('exec_main_func error (omitted by unit test)');
@@ -342,7 +352,7 @@ spa_page_transition.func = (function () {
                 'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e'
             };
 
-        if (!_is_front_api) {
+        if (!_is_front_api && spa_page_transition.getApiMode() === spa_page_transition.ENUM_API_MODE.STUB) {
             return $.Deferred().resolve();
         }
 
@@ -353,12 +363,12 @@ spa_page_transition.func = (function () {
         }
 
         spa_page_data.serverAccessor('http://172.26.158.2:9000/auth/hue/v1/authentication/authenticateClient', null, 'post', headers_for_auth).then(function (data) {
-                spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader succeeded. data', data);
+                spa_page_transition.getLogger().debug('/auth/hue/v1/authentication/authenticateClient succeeded. data', data);
                 headers_for_api['access-token'] = data.accessToken;
                 spa_page_util.setCookie('access-token', data.accessToken);
                 d.resolve(headers_for_api);
             }, function (data) {
-                spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader failed. data', data);
+                spa_page_transition.getLogger().debug('/auth/hue/v1/authentication/authenticateClient failed. data', data);
                 d.reject();
             }
         );
@@ -368,17 +378,20 @@ spa_page_transition.func = (function () {
     /**
      *
      * @param _path:  compulsory
-     * @param _params: optional
+     * @param _method: compulsory
      * @param _main_func:  compulsory
+     * @param _trigger_key: optional
      * @returns {*}
      */
-    createAjaxFunc = function (_path, _params, _main_func) {
+    createAjaxFunc = function (_path, _method, _main_func, _trigger_key) {
         var
-            decide_path, decide_params,
+            decide_params,
             res = createFunc.apply(this, arguments);
 
         res.path = _path;
-        res.params = chooseArgByType(arguments, 'object');
+        res.method = _method;
+        res.trigger_key = _trigger_key;
+        // res.params = chooseArgByType(arguments, 'object');
 
         res.execute = function (anchor_map) {
             var
@@ -386,39 +399,34 @@ spa_page_transition.func = (function () {
                 this_obj = this;
 
             makeFrontApiAccessTokenHeader(this_obj.is_front_api).then(function (headers) {
-                    spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
-                            ajaxCallback(data, d, this_obj, anchor_map);
+                    spa_page_data.serverAccessor(decidePath(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
+                            ajaxCallback(data, d, this_obj, anchor_map, _trigger_key);
                         }, function (data) {
                             if (data.status === 404) {
                                 makeFrontApiAccessTokenHeader(this_obj.is_front_api, true).then(function (headers) {
-                                    spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
-                                            ajaxCallback(data, d, this_obj, anchor_map);
+                                    spa_page_data.serverAccessor(decidePath(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
+                                            ajaxCallback(data, d, this_obj, anchor_map, _trigger_key);
                                         }, function (data) {
-                                            spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed(2). data', data);
+                                            spa_page_transition.getLogger().debug('createAjaxFunc.getFrontApiAccessToken.serverAccess failed. data', data);
                                             d.reject(data);
                                         }
                                     );
                                 }, function (data) {
-                                    spa_page_transition.getLogger().error('getFrontApiAccessToken failed(2). data', data);
+                                    spa_page_transition.getLogger().debug('createAjaxFunc.getFrontApiAccessToken failed. data', data);
                                     d.reject(data);
                                 });
                             } else {
-                                spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed. data', data);
+                                spa_page_transition.getLogger().debug('createAjaxFunc.serverAccess failed. data', data);
                                 d.reject(data);
                             }
                         }
                     );
                 }, function (data) {
-                    spa_page_transition.getLogger().error('makeFrontApiAccessTokenHeader failed. data', data);
+                    spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader failed. data', data);
                     d.reject(data);
                 }
             );
             return d.promise();
-        };
-
-        res.get_params = function (_get_params_func) {
-            this.get_params_func = _get_params_func;
-            return this;
         };
 
         res.set_method = function (_method) {
@@ -431,14 +439,6 @@ spa_page_transition.func = (function () {
             return this;
         };
 
-        decide_path = function (this_obj) {
-            if (this_obj.is_front_api) {
-                return this_obj.path[spa_page_transition.ENUM_API_MODE.REAL];
-            } else {
-                return this_obj.path[spa_page_transition.getApiMode()];
-            }
-        };
-
         decide_params = function (this_obj) {
             return this_obj.get_params_func ? this_obj.get_params_func() : this_obj.params;
         };
@@ -446,7 +446,20 @@ spa_page_transition.func = (function () {
         return res;
     };
 
-    ajaxCallback = function (data, dfd, this_obj, anchor_map) {
+    decidePath = function (this_obj) {
+        var res;
+        if (this_obj.is_front_api) {
+            res = this_obj.path[spa_page_transition.ENUM_API_MODE.REAL];
+        } else {
+            res = this_obj.path[spa_page_transition.getApiMode()];
+        }
+        if (spa_page_util.isEmpty(res)) {
+            spa_page_transition.getLogger().error('API path is empty!');
+        }
+        return res;
+    };
+
+    ajaxCallback = function (data, dfd, this_obj, anchor_map, trigger_key) {
         if (data.server_error_status) {
             dfd.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
         } else {
@@ -457,7 +470,8 @@ spa_page_transition.func = (function () {
                 this_obj.forward(data.next_action);
                 dfd.reject();
             } else {
-                this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
+                this_obj.exec_main_func(this_obj, anchor_map, data, trigger_key).then(function (data_main_func) {
+                    spa_page_transition.getLogger().debug(decidePath(this_obj) + 'is accessed successfully.');
                     dfd.resolve(data_main_func);
                 }, function (data_main_func) {
                     dfd.reject(data_main_func);
@@ -1383,6 +1397,7 @@ var spa_log = (function () {
         create_log: function (logs) {
             var
                 log, i, is_right, is_last,
+                prefix = this.logPrefix || '',
                 result = '';
 
             if (logs.length < 1) {
@@ -1394,7 +1409,7 @@ var spa_log = (function () {
                 is_last = (i === logs.length - 1);
                 is_right = (i % 2 === 1);
 
-                log = (is_right ? ' = ' : '');
+                log = (is_right ? ' = ' : prefix);
                 log += logs[i] instanceof Object ? JSON.stringify(logs[i], null, '\t') : logs[i];
                 log += (is_right && !is_last ? ', ' : '');
 
@@ -1404,9 +1419,9 @@ var spa_log = (function () {
         }
     };
 
-    createLogger = function (is_debug_mode, log_prefix) {
+    createLogger = function (log_prefix, is_not_debug_mode) {
         var logger = Object.create(loggerProto);
-        logger.isDebugMode = is_debug_mode;
+        logger.isDebugMode = is_not_debug_mode ? false : true;
         logger.logPrefix = log_prefix || '';
         return logger;
     };
