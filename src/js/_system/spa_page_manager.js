@@ -314,14 +314,15 @@ spa_page_transition.func = (function () {
         return res;
     };
 
-    makeFrontApiAccessTokenHeader = function (_is_front_api, _is_auth) {
+    makeFrontApiAccessTokenHeader = function (_is_front_api, _forcible_auth) {
         var
+            access_token,
             d = $.Deferred(),
-            headers = {
+            header_for_auth = {
                 'client-id': 'tenant001',
                 'client-secret': '4aK97Iq14pGqzqHkipnlh4Poo4Trn7bnhr/kmazou63vm4bhlZjusIfvrrLuvJU=',
             },
-            result = {
+            header_for_api = {
                 'client-id': 'tenant001',
                 'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e'
             };
@@ -330,16 +331,17 @@ spa_page_transition.func = (function () {
             return $.Deferred().resolve();
         }
 
-        if (!_is_auth) {
-            result['access-token'] = spa_page_util.getCookie('access-token');
-            return $.Deferred().resolve(result);
+        access_token = spa_page_util.getCookie('access-token');
+        if (access_token && !_forcible_auth) {
+            header_for_api['access-token'] = access_token;
+            return $.Deferred().resolve(header_for_api);
         }
 
-        spa_page_data.serverAccessor('http://172.26.158.2:9000/auth/hue/v1/authentication/authenticateClient', null, 'post', headers).then(function (data) {
+        spa_page_data.serverAccessor('http://172.26.158.2:9000/auth/hue/v1/authentication/authenticateClient', null, 'post', header_for_auth).then(function (data) {
                 spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader succeeded. data', data);
-                result['access-token'] = data.accessToken;
+                header_for_api['access-token'] = data.accessToken;
                 spa_page_util.setCookie('access-token', data.accessToken);
-                d.resolve(result);
+                d.resolve(header_for_api);
             }, function (data) {
                 spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader failed. data', data);
                 d.reject();
