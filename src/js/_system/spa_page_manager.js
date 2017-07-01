@@ -318,11 +318,11 @@ spa_page_transition.func = (function () {
         var
             access_token,
             d = $.Deferred(),
-            header_for_auth = {
+            headers_for_auth = {
                 'client-id': 'tenant001',
                 'client-secret': '4aK97Iq14pGqzqHkipnlh4Poo4Trn7bnhr/kmazou63vm4bhlZjusIfvrrLuvJU=',
             },
-            header_for_api = {
+            headers_for_api = {
                 'client-id': 'tenant001',
                 'site-id': '02694d81-089e-11e7-b9bd-996dc218f0e'
             };
@@ -333,41 +333,21 @@ spa_page_transition.func = (function () {
 
         access_token = spa_page_util.getCookie('access-token');
         if (access_token && !_forcible_auth) {
-            header_for_api['access-token'] = access_token;
-            return $.Deferred().resolve(header_for_api);
+            headers_for_api['access-token'] = access_token;
+            return $.Deferred().resolve(headers_for_api);
         }
 
-        spa_page_data.serverAccessor('http://172.26.158.2:9000/auth/hue/v1/authentication/authenticateClient', null, 'post', header_for_auth).then(function (data) {
+        spa_page_data.serverAccessor('http://172.26.158.2:9000/auth/hue/v1/authentication/authenticateClient', null, 'post', headers_for_auth).then(function (data) {
                 spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader succeeded. data', data);
-                header_for_api['access-token'] = data.accessToken;
+                headers_for_api['access-token'] = data.accessToken;
                 spa_page_util.setCookie('access-token', data.accessToken);
-                d.resolve(header_for_api);
+                d.resolve(headers_for_api);
             }, function (data) {
                 spa_page_transition.getLogger().debug('makeFrontApiAccessTokenHeader failed. data', data);
                 d.reject();
             }
         );
         return d.promise();
-    };
-
-    ajaxCallback = function (data, dfd, this_obj, anchor_map) {
-        if (data.server_error_status) {
-            dfd.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
-        } else {
-            if (data.http_status_code === 302 || data.http_status_code === 303) {
-                if (!data.next_action) {
-                    spa_page_transition.getLogger().error('Next action should be set in case of 302', data);
-                }
-                this_obj.forward(data.next_action);
-                dfd.reject();
-            } else {
-                this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
-                    dfd.resolve(data_main_func);
-                }, function (data_main_func) {
-                    dfd.reject(data_main_func);
-                });
-            }
-        }
     };
 
     createAjaxFunc = function (_path, _params, _main_func) {
@@ -387,12 +367,27 @@ spa_page_transition.func = (function () {
                     spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
                             ajaxCallback(data, d, this_obj, anchor_map);
                         }, function (data) {
-                            spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed. data', data);
-                            d.reject(data);
+                            if (data.status === 404) {
+                                makeFrontApiAccessTokenHeader(this_obj.is_front_api, true).then(function (headers) {
+                                    spa_page_data.serverAccessor(decide_path(this_obj), decide_params(this_obj), this_obj.method, headers).then(function (data) {
+                                            ajaxCallback(data, d, this_obj, anchor_map);
+                                        }, function (data) {
+                                            spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed(2). data', data);
+                                            d.reject(data);
+                                        }
+                                    );
+                                }, function (data) {
+                                    spa_page_transition.getLogger().error('getFrontApiAccessToken failed(2). data', data);
+                                    d.reject(data);
+                                });
+                            } else {
+                                spa_page_transition.getLogger().error('ajaxFunc.serverAccess failed. data', data);
+                                d.reject(data);
+                            }
                         }
                     );
                 }, function (data) {
-                    spa_page_transition.getLogger().error('getFrontApiAccessToken failed. data', data);
+                    spa_page_transition.getLogger().error('makeFrontApiAccessTokenHeader failed. data', data);
                     d.reject(data);
                 }
             );
@@ -434,6 +429,26 @@ spa_page_transition.func = (function () {
         };
 
         return res;
+    };
+
+    ajaxCallback = function (data, dfd, this_obj, anchor_map) {
+        if (data.server_error_status) {
+            dfd.reject({err_mes: 'serverAccessor error. status:' + data.server_error_status});
+        } else {
+            if (data.http_status_code === 302 || data.http_status_code === 303) {
+                if (!data.next_action) {
+                    spa_page_transition.getLogger().error('Next action should be set in case of 302', data);
+                }
+                this_obj.forward(data.next_action);
+                dfd.reject();
+            } else {
+                this_obj.exec_main_func(this_obj, anchor_map, data).then(function (data_main_func) {
+                    dfd.resolve(data_main_func);
+                }, function (data_main_func) {
+                    dfd.reject(data_main_func);
+                });
+            }
+        }
     };
 
     setIsUnitTestMode = function (_is_unit_test_mode) {
