@@ -15,7 +15,11 @@ var spa_page_transition = (function () {
         addAction, createFunc, createAjaxFunc, initialize, run, renderPage,
         spaLogger, getLogger,
         isDebugMode, debugMode,
-        isUnitTestMode, unitTestMode;
+        isUnitTestMode, unitTestMode,
+
+        ENUM_API_MODE = {STUB: 'STUB', REAL: 'REAL'},
+        apiMode = ENUM_API_MODE.STUB,
+        setApiMode, getApiMode;
 
     /**
      * Register function to be bound with action
@@ -70,6 +74,15 @@ var spa_page_transition = (function () {
         return spa_page_transition;
     };
 
+    getApiMode = function () {
+        return apiMode;
+    };
+
+    setApiMode = function (_apiMode) {
+        apiMode = _apiMode;
+        return spa_page_transition;
+    };
+
     unitTestMode = function (is_unit_test_mode) {
         isUnitTestMode = is_unit_test_mode;
         return spa_page_transition;
@@ -121,13 +134,15 @@ var spa_page_transition = (function () {
         createFunc: createFunc,
         createAjaxFunc: createAjaxFunc,
         debugMode: debugMode,
+        ENUM_API_MODE: ENUM_API_MODE,
+        getApiMode: getApiMode,
+        setApiMode: setApiMode,
         unitTestMode: unitTestMode,
         initialize: initialize,
         run: run,
         renderPage: renderPage,
     };
 }());
-
 
 spa_page_transition.model = (function () {
     'use strict';
@@ -237,7 +252,6 @@ spa_page_transition.model = (function () {
     };
 }());
 
-
 spa_page_transition.func = (function () {
     'use strict';
     var
@@ -299,6 +313,7 @@ spa_page_transition.func = (function () {
                 return args[i];
             }
         }
+        return null;
     };
 
     createFunc = function (_main_func) {
@@ -350,12 +365,19 @@ spa_page_transition.func = (function () {
         return d.promise();
     };
 
+    /**
+     *
+     * @param _path:  compulsory
+     * @param _params: optional
+     * @param _main_func:  compulsory
+     * @returns {*}
+     */
     createAjaxFunc = function (_path, _params, _main_func) {
         var
             decide_path, decide_params,
             res = createFunc.apply(this, arguments);
 
-        res.path = chooseArgByType(arguments, 'string');
+        res.path = _path;
         res.params = chooseArgByType(arguments, 'object');
 
         res.execute = function (anchor_map) {
@@ -391,13 +413,7 @@ spa_page_transition.func = (function () {
                     d.reject(data);
                 }
             );
-
             return d.promise();
-        };
-
-        res.get_path = function (_get_path_func) {
-            this.get_path_func = _get_path_func;
-            return this;
         };
 
         res.get_params = function (_get_params_func) {
@@ -416,12 +432,11 @@ spa_page_transition.func = (function () {
         };
 
         decide_path = function (this_obj) {
-            var
-                res = this_obj.get_path_func ? this_obj.get_path_func() : this_obj.path;
-            if (!res) {
-                throw new Error('path is not set.');
+            if (this_obj.is_front_api) {
+                return this_obj.path[spa_page_transition.ENUM_API_MODE.REAL];
+            } else {
+                return this_obj.path[spa_page_transition.getApiMode()];
             }
-            return res;
         };
 
         decide_params = function (this_obj) {
@@ -1291,16 +1306,16 @@ spa_page_transition.data_bind = (function () {
     })();
 
     run = function () {
-        $('[data-view-toggle-trigger]').on('click', function (e_toggle) {
+        $('[data-shell-toggle-trigger]').on('click', function (e_toggle) {
             var
-                trigger_key = $(this).attr('data-view-toggle-trigger'),
+                trigger_key = $(this).attr('data-shell-toggle-trigger'),
                 has_trigger_status = $(this).prop('type') === 'checkbox' || $(this).prop('type') === 'radio',
                 trigger_status_on = has_trigger_status && ($(this).prop('checked') || $(this).prop('selected'));
 
-            $('[data-view-toggle-class]').each(function (idx, el) {
+            $('[data-shell-toggle-class]').each(function (idx, el) {
                 var
                     toggle_class_list,
-                    data_bind_toggle_attr = $(this).attr('data-view-toggle-class');
+                    data_bind_toggle_attr = $(this).attr('data-shell-toggle-class');
 
                 toggle_class_list = evt_data_bind_view.get_toggle_class_list(
                     trigger_key, has_trigger_status, trigger_status_on, data_bind_toggle_attr);
@@ -1321,7 +1336,7 @@ spa_page_transition.data_bind = (function () {
             }
         });
 
-        $('[data-view-toggle-trigger="toggle-slide-next:on"]').trigger('click');
+        $('[data-shell-toggle-trigger="toggle-slide-next:on"]').trigger('click');
     };
 
     return {
@@ -1456,3 +1471,4 @@ var spa_page_util = (function () {
         setCookie: setCookie,
     }
 })();
+

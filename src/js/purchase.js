@@ -13,20 +13,15 @@ var purchase = (function () {
             /**
              * Product detail
              */
-            showProductDetail = spa_page_transition.createAjaxFunc('http://172.26.158.2:17050/api/v0/products/00000000-0000-001f-0000-00000000001f', function (observer, anchor_map, data) {
+            showProductDetail = spa_page_transition.createAjaxFunc(purchase_config.URL.PRODUCT_DETAIL, function (observer, anchor_map, data) {
                 getLogger().debug('showProductDetail(real API) is called!');
                 purchase.shell.hide_error();
                 observer.trigger('PRODUCT-DETAIL', data);
-            }).set_is_front_api(true),
-            // showProductDetail = spa_page_transition.createAjaxFunc('../../stub/purchase/product/show-product-detail.json', function (observer, anchor_map, data) {
-            //     getLogger().debug('showProductDetail is called!');
-            //     purchase.shell.hide_error();
-            //     observer.trigger('PRODUCT-DETAIL', data.contents);
-            // }),
-            addToCart = spa_page_transition.createAjaxFunc('../../stub/purchase/product/add-cart-item.json', function (observer, anchor_map, data) {
+            }),
+            addToCart = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART, function (observer, anchor_map, data) {
                 getLogger().debug('addToCart is called!', anchor_map);
             }).set_method('post'),
-            addToCartFailure = spa_page_transition.createAjaxFunc('../../stub/purchase/product/add-cart-item-failure.json', function (observer, anchor_map, data) {
+            addToCartFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART_FAILURE, function (observer, anchor_map, data) {
                 getLogger().debug('addToCartFailure is called!', anchor_map);
                 purchase.shell.show_error();
             }).set_method('post'),
@@ -34,18 +29,18 @@ var purchase = (function () {
             /**
              * Cart top
              */
-            showCartTop = spa_page_transition.createAjaxFunc('../../stub/purchase/cart/show-cart-top.json', function (observer, anchor_map, data) {
+            showCartTop = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW＿CART_TOP, function (observer, anchor_map, data) {
                 getLogger().debug('showProductDetail is called!');
                 purchase.shell.hide_error();
                 observer.trigger('CART-TOP', data.contents);
             }),
-            checkoutToAddress = spa_page_transition.createAjaxFunc('../../stub/purchase/cart/checkout-to-address.json', function (observer, anchor_map, data) {
+            checkoutToAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_ADDRESS, function (observer, anchor_map, data) {
                 getLogger().debug('checkoutToAddress is called!', anchor_map);
             }),
-            checkoutToBP = spa_page_transition.createAjaxFunc('../../stub/purchase/cart/checkout-to-bp.json', function (observer, anchor_map, data) {
+            checkoutToBP = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_BP, function (observer, anchor_map, data) {
                 getLogger().debug('checkoutToBP is called!', anchor_map);
             }),
-            checkoutFailure = spa_page_transition.createAjaxFunc('../../stub/purchase/cart/checkout-failure.json', function (observer, anchor_map, data) {
+            checkoutFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_FAILURE, function (observer, anchor_map, data) {
                 getLogger().debug('checkoutFailure is called!', anchor_map);
                 purchase.shell.show_error();
             }),
@@ -53,27 +48,27 @@ var purchase = (function () {
             /**
              * Checkout address
              */
-            showCheckoutAddress = spa_page_transition.createAjaxFunc('../../stub/purchase/checkout/show-checkout-address.json', function (observer, anchor_map, data) {
+            showCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_ADDRESS, function (observer, anchor_map, data) {
                 getLogger().debug('showCheckoutAddress is called!');
                 purchase.shell.hide_error();
                 observer.trigger('CHECKOUT-ADDRESS', data.contents);
             }),
-            backFromCheckoutAddress = spa_page_transition.createAjaxFunc('../../stub/purchase/checkout/back-from-checkout-address.json', function (observer, anchor_map, data) {
+            backFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_ADDRESS, function (observer, anchor_map, data) {
                 getLogger().debug('backFromCheckoutAddress is called!', anchor_map);
             }),
-            nextFromCheckoutAddress = spa_page_transition.createAjaxFunc('../../stub/purchase/checkout/next-from-checkout-address.json', function (observer, anchor_map, data) {
+            nextFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.NEXT_FROM_CHECKOUT_ADDRESS, function (observer, anchor_map, data) {
                 getLogger().debug('nextFromCheckoutAddress is called!', anchor_map);
             }),
 
             /**
              * Checkout BP
              */
-            showCheckoutBP = spa_page_transition.createAjaxFunc('../../stub/purchase/checkout/show-checkout-bp.json', function (observer, anchor_map, data) {
+            showCheckoutBP = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_BP, function (observer, anchor_map, data) {
                 getLogger().debug('showCheckoutBP is called!');
                 purchase.shell.hide_error();
                 observer.trigger('CHECKOUT-BP', data.contents);
             }),
-            backFromCheckoutBP = spa_page_transition.createAjaxFunc('../../stub/purchase/checkout/back-from-checkout-bp.json', function (observer, anchor_map, data) {
+            backFromCheckoutBP = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_BP, function (observer, anchor_map, data) {
                 getLogger().debug('backFromCheckoutBP is called!', anchor_map);
             }),
 
@@ -113,14 +108,17 @@ var purchase = (function () {
 
 purchase.shell = (function () {
     var
+        $container,
+
         show_error = function () {
-            $('#notification-error').removeClass('contents-error-hide').addClass('contents-error-show');
+            $container.find('#notification-error').removeClass('contents-error-hide').addClass('contents-error-show');
         },
         hide_error = function () {
-            $('#notification-error').addClass('contents-error-hide').removeClass('contents-error-show');
+            $container.find('#notification-error').addClass('contents-error-hide').removeClass('contents-error-show');
         },
 
         initModule = function (_$container) {
+            $container = _$container;
         };
 
     return {
