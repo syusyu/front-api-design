@@ -1,3 +1,91 @@
 {
-  "productName": "CASIO G-Shock"
+  "attributeChanged": true,
+  "attributes": {},
+  "breadcrumbInfo": [
+    {
+      "displaySequence": 0,
+      "id": "string",
+      "textValue": "string",
+      "url": "string"
+    }
+  ],
+  "categoryLeaf": true,
+  "categoryRoot": true,
+  "discountFlag": true,
+  "displayChanged": true,
+  "displayStatus": "string",
+  "priceChanged": true,
+  "productAbbreviatedName": "string",
+  "productAdultFlag": true,
+  "productAlternativeName": "string",
+  "productCategoryAdultOnly": true,
+  "productCategoryCode": "string",
+  "productCategoryDeleted": true,
+  "productCategoryDescription": "string",
+  "productCategoryDisplaySequence": 0,
+  "productCategoryName": "string",
+  "productCategoryShortName": "string",
+  "productCategoryURL": "string",
+  "productCode": "string",
+  "productDescription": "string",
+  "productDescriptionHtml": "string",
+  "productDescriptionTitle": "string",
+  "productDiscountPrice": 0,
+  "productId": "string",
+  "productIdentificationCode": {},
+  "productImageList": [
+    {
+      "caption": "string",
+      "displayed": true,
+      "filePath": "string",
+      "id": "string",
+      "note": "string"
+    }
+  ],
+  "productListPrice": 0,
+  "productMainCategoryId": "string",
+  "productName": "string",
+  "productRating": [
+    0
+  ],
+  "productSKU": "string",
+  "productSpecification": {
+    "color": "string",
+    "fileSize": "string",
+    "format": "string",
+    "id": "string",
+    "identificationNumber": "string",
+    "language": "string",
+    "printLength": "string",
+    "productDimension": "string",
+    "productSize": "string",
+    "shippingWeight": "string",
+    "title": "string"
+  },
+  "productStock": [
+    {
+      "id": "string",
+      "quantity": 0,
+      "sku": "string",
+      "stockGroupId": "string",
+      "storeId": "string"
+    }
+  ],
+  "productThumbnailList": [
+    {
+      "caption": "string",
+      "displayed": true,
+      "filePath": "string",
+      "id": "string",
+      "note": "string"
+    }
+  ],
+  "productTotalPages": 0,
+  "productTypeCode": "string",
+  "productTypeId": "string",
+  "productTypeName": "string",
+  "publishStatus": "string",
+  "saleStatus": "string",
+  "siteId": "string",
+  "storeId": "string"
 }

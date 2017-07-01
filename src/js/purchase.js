@@ -69,7 +69,7 @@ var purchase = (function () {
         purchase.model.initModule();
 
         //Init Application
-        spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.STUB)
+        spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.REAL)
             .setInitAction('page-product-detail', [showProductDetail])
 
             .addAction('show-product-detail', 'page-product-detail', [showProductDetail])

@@ -1,10 +1,49 @@
 {
-  "cart_items": [
+  "allowGuestCheckout": true,
+  "authenticated": true,
+  "buyerShoppingPoints": 0,
+  "cartItems": [
     {
-      "item_name" : "CASIO G-Shock"
-    },
-    {
-      "item_name" : "CASIO G-Shock2"
+      "cartQuantity": 0,
+      "coupons": [
+        {
+          "id": 0,
+          "name": "string"
+        }
+      ],
+      "deliveryDuration": "string",
+      "inStock": true,
+      "maxQuantity": 0,
+      "productInfo": {
+        "attributes": [
+          {
+            "key": "string",
+            "value": "string"
+          }
+        ],
+        "id": 0,
+        "image": "string",
+        "originalPrice": 0,
+        "sellingPrice": 0,
+        "title": "string",
+        "type": "string",
+        "url": "string"
+      },
+      "seller": {
+        "name": "string",
+        "shopLink": "string"
+      },
+      "totalStockNo": 0
     }
-  ]
+  ],
+  "earningShoppingPoints": 0,
+  "invoiceList": [
+    {
+      "name": "string",
+      "value": 0
+    }
+  ],
+  "showTermsAndConditions": true,
+  "totalItemsPrice": 0,
+  "totalNoItems": 0
 }
