@@ -15,7 +15,7 @@
   "displayChanged": true,
   "displayStatus": "string",
   "priceChanged": true,
-  "productAbbreviatedName": "string",
+  "productAbbreviatedName": "Nice Shirts",
   "productAdultFlag": true,
   "productAlternativeName": "string",
   "productCategoryAdultOnly": true,
@@ -44,7 +44,7 @@
   ],
   "productListPrice": 0,
   "productMainCategoryId": "string",
-  "productName": "string",
+  "productName": "Casio G-Shock",
   "productRating": [
     0
   ],
