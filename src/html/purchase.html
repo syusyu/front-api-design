@@ -2,113 +2,147 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>store-admin-purchase</title>
+    <title>Store front [Purchase]</title>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="../css/_system/font-awesome.css"/>
     <link rel="stylesheet" href="../css/_system/spa_page_manager.css"/>
-    <link rel="stylesheet" href="../css/common.css"/>
+    <link rel="stylesheet" href="../css/_base.css"/>
+    <link rel="stylesheet" href="../css/_structures.css"/>
+    <link rel="stylesheet" href="../css/contents-purchase.css"/>
 </head>
 <body>
 
-<div class="header">
-    <div class="">
-        <h1><a href="">Front site</a></h1>
-    </div>
-</div>
-
-<div id="main">
-    <div class="sidemenu">
-    </div>
-    <div class="contents-wrapper">
-
-        <div id="notification-error" class="contents-error-hide">
-            Error occurs. Please review your selection.
-        </div>
-
-        <div id="contents-product-detail" class="spa-page page-product-detail">
-            <h2>Product detail</h2>
-            <hr>
-
-            <p>
-                <span data-bind-text="PRODUCT-DETAIL.productName"></span><br>
-            </p>
-            <ul>
-                <li><span data-bind-text="PRODUCT-DETAIL.productAlternativeName"></span></li>
-                <li><span data-bind-text="PRODUCT-DETAIL.productAbbreviatedName"></span></li>
-                <li><span data-bind-text="PRODUCT-DETAIL.productDescriptionTitle"></span></li>
-            </ul>
-            <p>
-                <span data-bind-html="PRODUCT-DETAIL.productDescriptionHtml"></span></li>
-            </p>
-            <hr>
-
-            <div>
-                <a href="javascript:void(0);" data-action-click-id="add-cart-item">Add cart item</a>
-                <br/>
-                <a href="javascript:void(0);" data-action-click-id="add-cart-item-failure">Add cart item (Fail)</a>
-                <br/>
+<div class="st-header">
+    <div class="st-header__inner">
+        <a class="st-header__logo" href="./purchase.html">HUE SITE</a>
+        <div class="st-header__search">
+            <div class="st-header-search">
+                <div class="st-header-search__form">
+                    <div class="st-header-search__item">
+                        <i class="fa fa-search st-header-search__button"></i>
+                    </div>
+                    <div class="st-header-search__item">
+                        <input type="text" class="st-header-search__input">
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div id="contents-cart-top" class="spa-page page-cart-top">
-            <h2>Cart top</h2>
-            <hr>
-
-            <table class="tbl-search-result">
-                <thead>
-                <th>Name</th>
-                <th></th>
-                </thead>
-                <tbody data-bind-loop="CART-TOP.cart_items">
-                <tr>
-                    <td>
-                        <label>
-                            <span data-bind-text="CART-TOP.cart_items.item_name"></span>
-                        </label>
-                    </td>
-                    <td>
-                        <button data-action-click-id="remove-item">Remove</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <hr>
-
-            <a href="javascript:void(0);" data-action-click-id="show-product-detail">Back to product</a>
-            <br/>
-            <a href="javascript:void(0);" data-action-click-id="checkout-to-address">Checkout (To address)</a>
-            <br/>
-            <a href="javascript:void(0);" data-action-click-id="checkout-to-bp">Checkout (To BP)</a>
-            <br/>
-            <a href="javascript:void(0);" data-action-click-id="checkout-failure">Checkout (Failure)</a>
-            <br/>
-        </div>
-
-        <div id="contents-checkout-address" class="spa-page page-checkout-address">
-            <h2>Shipping address</h2>
-            <hr>
-
-            <a href="javascript:void(0);" data-action-click-id="back-from-checkout-address">Back to Cart</a>
-            <a href="javascript:void(0);" data-action-click-id="next-from-checkout-address">Next</a>
-        </div>
-
-        <div id="contents-checkout-bp" class="spa-page page-checkout-bp">
-            <h2>BP</h2>
-            <hr>
-
-            <a href="javascript:void(0);" data-action-click-id="back-from-checkout-bp">Back to Cart</a>
-            <a href="javascript:void(0);" data-action-click-id="purchase-from-bp">Purchase</a>
+        <div class="st-header__minicart">
+            <a href="javascript:void(0)" data-action-click-id="show-cart-top">
+                <i class="fa fa-shopping-cart fa-2x st-header-minicart__icon" ></i>
+                <span class="st-header-minicart__text">Shopping Cart</span>
+            </a>
         </div>
     </div>
-
-    <input type="hidden" id="server-host" value="."/>
-
 </div>
 
+<div class="st-main">
+    <div class="c-container">
+        <div class="c-container__inner">
 
-<div class="footer">
-    <p>Copy right &copy; EC development team</p>
+            <div id="contents-product-detail" class="spa-page page-product-detail c-section">
+                <div class="c-product-detail">
+                    <div class="c-product-detail__inner">
+                        <div class="c-product-detail__image">
+                            <img src="http://placehold.it/450x500" />
+                        </div>
+                        <div class="c-product-detail__contents">
+                            <div class="c-product-detail__name">
+                                <span data-bind-text="PRODUCT-DETAIL.productName"></span>
+                            </div>
+                            <div class="c-product-detail__spec">
+                                <p data-bind-text="PRODUCT-DETAIL.productDescription"></p>
+                            </div>
+
+                            <div id="error-add-item" class="c-error-add-item--hide c-error">
+                                Error occurs. Please review your selection.
+                            </div>
+
+                            <div class="c-button-default">
+                                <a href="javascript:void(0);" data-action-click-id="add-cart-item">Add to Cart</a>
+                            </div>
+
+                            <div class="c-button-default">
+                                <a href="javascript:void(0);" data-action-click-id="add-cart-item-failure">Add to Cart (Failure)</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="contents-cart-top" class="spa-page page-cart-top c-section">
+                <div class="c-cart-items">
+                    <table class="c-cart-items__grid">
+                        <thead>
+                        <th>Name</th>
+                        <th>Unit price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                        </thead>
+                        <tbody data-bind-loop="CART-TOP.cartItems">
+                        <tr>
+                            <td data-bind-text="CART-TOP.cartItems.productInfo.title"></td>
+                            <td data-bind-text="CART-TOP.cartItems.productInfo.sellingPrice" data-bind-format-text="number" data-bind-affix-text="$#"></td>
+                            <td data-bind-text="CART-TOP.cartItems.cartQuantity"></td>
+                            <td data-bind-text="CART-TOP.cartItems.subTotal" data-bind-format-text="number" data-bind-affix-text="$#"></td>
+                            <td><a href="javascript:void(0);">Remove</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="error-checkout" class="c-error-add-item--hide c-error">
+                    Error occurs. Please review your selection.
+                </div>
+
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="show-product-detail">Back to product</a>
+                </div>
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="checkout-to-address">Checkout (To address)</a>
+                </div>
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="checkout-to-bp">Checkout (To BP)</a>
+                </div>
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="checkout-failure">Checkout (Failure)</a>
+                </div>
+            </div>
+
+            <div id="contents-checkout-address" class="spa-page page-checkout-address c-section">
+                <h2>Shipping address</h2>
+
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="back-from-checkout-address">Back to Cart</a>
+                </div>
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="next-from-checkout-address">Next</a>
+                </div>
+            </div>
+
+            <div id="contents-checkout-bp" class="spa-page page-checkout-bp c-section">
+                <h2>BP</h2>
+
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="back-from-checkout-bp">Back to Cart</a>
+                </div>
+                <div class="c-button-default">
+                    <a href="javascript:void(0);" data-action-click-id="purchase-from-bp">Purchase</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<div class="st-footer">
+    <div class="st-footer__inner">
+        <p class="st-footer__copyright">Copy right &copy; HUE-EC</p>
+    </div>
+</div>
+
 
 <script src="../js/_system/jquery/jquery.js"></script>
 <script src="../js/_system/jquery/jquery.uriAnchor.js"></script>
@@ -117,7 +151,7 @@
 <script src="../js/purchase.js"></script>
 <script>
     $(function () {
-        purchase.initModule($('#main'));
+        purchase.initModule($('.st-main'));
     });
 </script>
 

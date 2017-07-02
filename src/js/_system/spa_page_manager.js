@@ -882,7 +882,7 @@ spa_page_transition.data_bind = (function () {
                 return _affix_bind_val(val, bind_affix);
             }
             if (bind_format === 'number') {
-                val = val.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+                val = String(val).replace(/(\d)(?=(\d{3})+$)/g, '$1,');
             } else if (bind_format === 'date') {
                 spa_page_transition.getLogger().warn('Not implemented yet.')
             } else {

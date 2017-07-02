@@ -8,7 +8,7 @@
     flex-grow: 0;
     color: #ffffff;
     width: 40px;
-    padding: 7px 4px 5px 6px;
+    padding: 7px 5px 5px 6px;
 
     font-size: 15px;
     font-weight: bold;
@@ -49,14 +49,15 @@
     flex-grow: 1;
     display: flex;
     justify-content: flex-end;
-    color: #ffffff;
 }
 .st-header-minicart__icon {
-    padding: 7px 5px 5px 0px;
+    padding: 5px 2px 5px 0px;
+    color: #ffffff;
 }
 .st-header-minicart__text {
-    padding: 12px 20px 5px 0px;
+    padding-right: 20px;
     font-size: 15px;
+    color: #ffffff;
 }
 
 

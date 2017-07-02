@@ -69,7 +69,7 @@ var purchase = (function () {
         purchase.model.initModule();
 
         //Init Application
-        spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.STUB)
+        spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.STUB).initialize(showProductDetail)
             .setInitAction('page-product-detail', [showProductDetail])
 
             .addAction('show-product-detail', 'page-product-detail', [showProductDetail])
@@ -101,10 +101,10 @@ purchase.view = (function () {
         $container,
 
         show_error = function () {
-            $container.find('#notification-error').removeClass('contents-error-hide').addClass('contents-error-show');
+            $container.find('.c-error').removeClass('c-error-add-item--hide').addClass('c-error-add-item--show');
         },
         hide_error = function () {
-            $container.find('#notification-error').addClass('contents-error-hide').removeClass('contents-error-show');
+            $container.find('.c-error').addClass('c-error-add-item--hide').removeClass('c-error-add-item--show');
         },
 
         initModule = function (_$container) {

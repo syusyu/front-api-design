@@ -4,46 +4,23 @@
   "buyerShoppingPoints": 0,
   "cartItems": [
     {
-      "cartQuantity": 0,
-      "coupons": [
-        {
-          "id": 0,
-          "name": "string"
-        }
-      ],
-      "deliveryDuration": "string",
-      "inStock": true,
-      "maxQuantity": 0,
+      "cartQuantity": 1,
       "productInfo": {
-        "attributes": [
-          {
-            "key": "string",
-            "value": "string"
-          }
-        ],
-        "id": 0,
-        "image": "string",
-        "originalPrice": 0,
-        "sellingPrice": 0,
-        "title": "string",
-        "type": "string",
-        "url": "string"
+        "sellingPrice": 2000,
+        "title": "MEN Dry EX Short Sleeve Polo Shirt"
       },
-      "seller": {
-        "name": "string",
-        "shopLink": "string"
-      },
-      "totalStockNo": 0
-    }
-  ],
-  "earningShoppingPoints": 0,
-  "invoiceList": [
+      "subTotal": 2000
+    },
     {
-      "name": "string",
-      "value": 0
+      "cartQuantity": 2,
+      "productInfo": {
+        "sellingPrice": 3000,
+        "title": "MEN Dry EX Short Sleeve Polo Shirt New"
+      },
+      "subTotal": 6000
+
     }
   ],
-  "showTermsAndConditions": true,
-  "totalItemsPrice": 0,
+  "totalItemsPrice": 8000,
   "totalNoItems": 0
 }
