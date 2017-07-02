@@ -14,22 +14,22 @@
 
 <div class="st-header">
     <div class="st-header__inner">
-        <a class="st-header__logo" href="./template.html"> Store Front Site</a>
+        <a class="st-header__logo" href="./template.html">HUE SITE</a>
         <div class="st-header__search">
             <div class="st-header-search">
                 <div class="st-header-search__form">
                     <div class="st-header-search__item">
-                        <input type="text" class="st-header-search__input">
+                        <i class="fa fa-search st-header-search__button"></i>
                     </div>
                     <div class="st-header-search__item">
-                        <i class="fa fa-search st-header-search__button"></i>
+                        <input type="text" class="st-header-search__input">
                     </div>
                 </div>
             </div>
         </div>
         <div class="st-header__minicart">
             <i class="fa fa-shopping-cart fa-2x st-header-minicart__icon" ></i>
-            <span class="st-header-minicart__text">Cart</span>
+            <span class="st-header-minicart__text">Shopping Cart</span>
         </div>
     </div>
 </div>
@@ -41,41 +41,34 @@
             <div id="contents-product-detail" class="spa-page page-product-detail c-section">
                 <div class="c-section__body">
 
-
-                    <div class="c-product-heading">
-                        <span data-bind-text="PRODUCT-DETAIL.productName"></span>
-                    </div>
-
-
-                    <div class="c-product-main">
-                        <div class="c-product-main__inner">
-                            <div class="c-product-main__image">
-                                <img src="http://placehold.it/350x150" />
+                    <div class="c-product-detail">
+                        <div class="c-product-detail__inner">
+                            <div class="c-product-detail__image">
+                                <img src="http://placehold.it/350x400" />
 
                             </div>
-                            <div class="c-product-main__contents">
-                                <ul>
+                            <div class="c-product-detail__contents">
+                                <div class="c-product-detail__name">
+                                    <span data-bind-text="PRODUCT-DETAIL.productName"></span>
+                                </div>
+                                <ul class="c-product-detail__spec">
                                     <li><span data-bind-text="PRODUCT-DETAIL.productAlternativeName"></span></li>
                                     <li><span data-bind-text="PRODUCT-DETAIL.productAbbreviatedName"></span></li>
                                     <li><span data-bind-text="PRODUCT-DETAIL.productDescriptionTitle"></span></li>
                                 </ul>
 
-                                <div id="notification-error" class="contents-error-hide">
+                                <div id="notification-error" class="c-product-detail__error contents-error-hide">
                                     Error occurs. Please review your selection.
                                 </div>
 
-                                <div class="c-product-main__add-cart-button">
+                                <div class="c-product-detail__add-cart-button">
                                     <a href="javascript:void(0);" data-action-click-id="add-cart-item">Add cart item</a>
                                 </div>
-                                <div class="c-product-main__add-cart-button">
+                                <div class="c-product-detail__add-cart-button">
                                     <a href="javascript:void(0);" data-action-click-id="add-cart-item-failure">Add cart item (Fail)</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="c-product-main__spec">
-                        <span data-bind-html="PRODUCT-DETAIL.productDescriptionHtml"></span></li>
                     </div>
                 </div>
             </div>
