@@ -8,45 +8,45 @@ var purchase = (function () {
             /**
              * Product detail
              */
-            showProductDetail = spa_page_transition.createAjaxFunc(purchase_config.URL.PRODUCT_DETAIL, 'get', function (observer, anchor_map, data) {
+            showProductDetail = spa_page_transition.createAjaxFunc(purchase_config.URL.PRODUCT_DETAIL, 'get', function () {
                 purchase.view.hide_error();
             }, 'PRODUCT-DETAIL'),
 
-            addToCart = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART, 'post', function (observer, anchor_map, data) {
+            addToCart = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART, 'post', function () {
             }),
 
-            addToCartFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART_FAILURE, 'post', function (observer, anchor_map, data) {
+            addToCartFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.ADD_TO_CART_FAILURE, 'post', function () {
                 purchase.view.show_error();
             }),
 
             /**
              * Cart top
              */
-            showCartTop = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW＿CART_TOP, 'get', function (observer, anchor_map, data) {
+            showCartTop = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW＿CART_TOP, 'get', function () {
                 purchase.view.hide_error();
             }, 'CART-TOP'),
 
-            checkoutToAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_ADDRESS, 'post', function (observer, anchor_map, data) {
+            checkoutToAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_ADDRESS, 'post', function () {
             }),
 
-            checkoutToBP = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_BP, 'post', function (observer, anchor_map, data) {
+            checkoutToBP = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_BP, 'post', function () {
             }),
 
-            checkoutFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_FAILURE, 'post', function (observer, anchor_map, data) {
+            checkoutFailure = spa_page_transition.createAjaxFunc(purchase_config.URL.CHECKOUT_TO_FAILURE, 'post', function () {
                 purchase.view.show_error();
             }),
 
             /**
              * Checkout address
              */
-            showCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_ADDRESS, 'get', function (observer, anchor_map, data) {
+            showCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.SHOW_CHECKOUT_ADDRESS, 'get', function () {
                 purchase.view.hide_error();
             }, 'CHECKOUT-ADDRESS'),
 
-            backFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_ADDRESS, 'post', function (observer, anchor_map, data) {
+            backFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.BACK_FROM_CHECKOUT_ADDRESS, 'post', function () {
             }),
 
-            nextFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.NEXT_FROM_CHECKOUT_ADDRESS, 'post', function (observer, anchor_map, data) {
+            nextFromCheckoutAddress = spa_page_transition.createAjaxFunc(purchase_config.URL.NEXT_FROM_CHECKOUT_ADDRESS, 'post', function () {
             }),
 
             /**
@@ -69,7 +69,7 @@ var purchase = (function () {
         purchase.model.initModule();
 
         //Init Application
-        spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.REAL)
+        spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.STUB)
             .setInitAction('page-product-detail', [showProductDetail])
 
             .addAction('show-product-detail', 'page-product-detail', [showProductDetail])
