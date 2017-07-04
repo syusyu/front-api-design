@@ -3,12 +3,12 @@ var tutorial01 = (function () {
     var
         initModule = function () {
             var
-                shutUpFunc = spa_page_transition.createAjaxFunc(
-                    tutorial_config.URL.SHUT_UP, 'get', function () {}, 'YOUR');
+                knockingFunc = spa_page_transition.createAjaxFunc(
+                    tutorial_config.URL.KNOCKING, 'get', function () {}, 'YOU');
 
             spa_page_transition
-                .setInitAction('page-your-room')
-                .addAction('shut-up', 'page-your-room', [shutUpFunc])
+                .setInitAction('page-my-room')
+                .addAction('knocking', 'page-my-room', [knockingFunc])
                 .run();
         };
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tutorial01</title>
+    <title>Tutorial02</title>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="../../css/_system/font-awesome.css"/>
     <link rel="stylesheet" href="../../css/_system/spa_page_manager.css"/>
@@ -14,7 +14,7 @@
 
 <div class="st-header">
     <div class="st-header__inner">
-        <a class="st-header__logo" href="./tutorial01.html">HUE SITE</a>
+        <a class="st-header__logo" href="./tutorial02.html">HUE SITE</a>
         <div class="st-header__search">
             <div class="st-header-search">
                 <div class="st-header-search__form">
@@ -43,7 +43,16 @@
                     <p class="c-room__status" data-bind-text="YOU.attitude">YEAH! Let's have party! Bring more beer, dance and song, YEAH!</p>
                 </div>
                 <div class="c-room-button">
-                    <a href="javascript:void(0);" data-action-click-id="knocking">Excuse me...</a>
+                    <a href="javascript:void(0);" data-action-click-id="go-to-your-room-with-anger">I'll knock you up</a>
+                </div>
+            </div>
+
+            <div class="spa-page page-your-room c-section">
+                <div class="c-room">
+                    <p class="c-room__status" data-bind-text="YOU.attitude"></p>
+                </div>
+                <div class="c-room-button">
+                    <a href="javascript:void(0);" data-action-click-id="leave-with-calm">Then, I leave</a>
                 </div>
             </div>
             <!-- ################################ Contents end ################################ -->
@@ -63,10 +72,10 @@
 <script src="../../js/_system/jquery/jquery.uriAnchor.js"></script>
 <script src="../../js/_system/spa_page_manager.js"></script>
 <script src="../../js/tutorial/tutorial.config.js"></script>
-<script src="../../js/tutorial/tutorial01.js"></script>
+<script src="../../js/tutorial/tutorial02.js"></script>
 <script>
     $(function () {
-        tutorial01.initModule();
+        tutorial02.initModule();
     });
 </script>
 
