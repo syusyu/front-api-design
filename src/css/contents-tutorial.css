@@ -1,0 +1,25 @@
+.c-room {
+    margin-top: 10px;
+}
+.c-room__status {
+    padding: 10px;
+    border: 1px solid navy;
+    width: 500px;
+    color: navy;
+    font-size: 15px;
+}
+
+.c-room-button {
+    display: block;
+    margin: 10px 0px 10px 0px;
+    padding: 10px 0px 10px 0px;
+    background: #5c5c8a;
+    width: 200px;
+    text-align: center;
+    font-size: 15px;
+    cursor: pointer;
+}
+.c-room-button a {
+    text-decoration: none;
+    color: #ffffff;
+}

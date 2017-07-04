@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutorial01</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="../../css/_system/font-awesome.css"/>
+    <link rel="stylesheet" href="../../css/_system/spa_page_manager.css"/>
+    <link rel="stylesheet" href="../../css/_base.css"/>
+    <link rel="stylesheet" href="../../css/_structures.css"/>
+    <link rel="stylesheet" href="../../css/contents-tutorial.css"/>
+</head>
+<body>
+
+<div class="st-header">
+    <div class="st-header__inner">
+        <a class="st-header__logo" href="./tutorial01.html">HUE SITE</a>
+        <div class="st-header__search">
+            <div class="st-header-search">
+                <div class="st-header-search__form">
+                    <div class="st-header-search__item">
+                        <i class="fa fa-search st-header-search__button"></i>
+                    </div>
+                    <div class="st-header-search__item">
+                        <input type="text" class="st-header-search__input">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="st-header__minicart">
+            <i class="fa fa-shopping-cart fa-2x st-header-minicart__icon" ></i>
+            <span class="st-header-minicart__text">Shopping Cart</span>
+        </div>
+    </div>
+</div>
+
+<div class="st-main">
+    <div class="c-container">
+        <div class="c-container__inner">
+            <!-- ################################ Contents start ################################ -->
+            <div id="contents-xxx" class="spa-page page-your-room c-section">
+                <div class="c-room">
+                    <p class="c-room__status" data-bind-text="YOUR.status">YEAH! Let's have party! Bring more beer, dance and song, YEAH!</p>
+                </div>
+                <div class="c-room-button">
+                    <a href="javascript:void(0);" data-action-click-id="shut-up">Shut up</a>
+                </div>
+            </div>
+            <!-- ################################ Contents end ################################ -->
+        </div>
+    </div>
+</div>
+
+
+<div class="st-footer">
+    <div class="st-footer__inner">
+        <p class="st-footer__copyright">Copy right &copy; HUE-EC</p>
+    </div>
+</div>
+
+
+<script src="../../js/_system/jquery/jquery.js"></script>
+<script src="../../js/_system/jquery/jquery.uriAnchor.js"></script>
+<script src="../../js/_system/spa_page_manager.js"></script>
+<script src="../../js/tutorial/tutorial.config.js"></script>
+<script src="../../js/tutorial/tutorial01.js"></script>
+<script>
+    $(function () {
+        tutorial01.initModule();
+    });
+</script>
+
+</body>
+</html>
