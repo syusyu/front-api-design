@@ -2,7 +2,7 @@ var purchase_config =  {
     URL : {
         PRODUCT_DETAIL: {
             STUB: '../../stub/purchase/product/show-product-detail.json',
-            REAL: 'http://172.26.158.2:17050/api/v0/products/00000000-0000-001f-0000-00000000001f'
+            REAL: 'http://172.26.158.201:17050/api/v0/products/00000000-0000-001f-0000-00000000001f'
         },
         ADD_TO_CART: {
             STUB: '../../stub/purchase/product/add-cart-item.json',

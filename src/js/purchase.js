@@ -70,7 +70,7 @@ var purchase = (function () {
 
         //Init Application
         spa_page_transition.setApiMode(spa_page_transition.ENUM_API_MODE.STUB).initialize(showProductDetail)
-            .setInitAction('page-product-detail', [showProductDetail])
+            .setInitAction('page-product-detail')
 
             .addAction('show-product-detail', 'page-product-detail', [showProductDetail])
             .addAction('add-cart-item', '', [addToCart])
