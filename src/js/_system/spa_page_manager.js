@@ -434,6 +434,11 @@ spa_page_transition.func = (function () {
             return this;
         };
 
+        res.get_params = function (_get_params_func) {
+            this.get_params_func = _get_params_func;
+            return this;
+        };
+
         res.set_is_front_api = function (_is_front_api) {
             this.is_front_api = _is_front_api;
             return this;
@@ -502,8 +507,9 @@ var spa_page_data = (function () {
                 url: filePath,
                 type: method || 'get',
                 headers: headers,
-                data: data,
+                data: JSON.stringify(data),
                 dataType: 'json',
+                contentType: 'application/json',
                 success: dfd.resolve,
                 error: dfd.reject,
                 cache: false
